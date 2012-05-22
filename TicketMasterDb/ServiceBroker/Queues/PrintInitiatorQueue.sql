@@ -1,0 +1,7 @@
+﻿CREATE QUEUE PrintInitiatorQueue WITH ACTIVATION
+(
+	STATUS = ON,
+	PROCEDURE_NAME = [BrokerPrintMessageProcessed],
+	MAX_QUEUE_READERS = 4,
+	EXECUTE AS SELF
+)

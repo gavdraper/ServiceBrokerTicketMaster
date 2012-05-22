@@ -1,0 +1,1 @@
+﻿CREATE MESSAGE TYPE [ProcessPaymentResponse] VALIDATION = WELL_FORMED_XML

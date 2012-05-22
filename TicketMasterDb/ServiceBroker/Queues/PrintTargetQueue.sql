@@ -1,0 +1,1 @@
+﻿CREATE QUEUE PrintTargetQueue WITH STATUS = ON

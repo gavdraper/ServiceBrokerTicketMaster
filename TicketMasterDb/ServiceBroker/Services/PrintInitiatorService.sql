@@ -1,0 +1,1 @@
+﻿CREATE SERVICE PrintInitiatorService ON QUEUE PrintInitiatorQueue(PrintContract) 

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>TicketMasterDb</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{a2f95316-5a72-455b-8700-d4f9a1ef7135}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql110DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>TicketMasterDb</RootNamespace>
+    <AssemblyName>TicketMasterDb</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- VS10 without SP1 will not have VisualStudioVersion set, so do that here -->
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Tables" />
+    <Folder Include="StoredProcedures" />
+    <Folder Include="ServiceBroker" />
+    <Folder Include="ServiceBroker\Messages" />
+    <Folder Include="ServiceBroker\Contracts" />
+    <Folder Include="ServiceBroker\Queues" />
+    <Folder Include="ServiceBroker\Services" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\PaymentStatus.sql" />
+    <Build Include="Tables\PrintStatus.sql" />
+    <Build Include="Tables\Events.sql" />
+    <Build Include="Tables\Bookings.sql" />
+    <Build Include="StoredProcedures\GetEvents.sql" />
+    <Build Include="StoredProcedures\CreateBooking.sql" />
+    <Build Include="StoredProcedures\BrokerPrintMessageProcessed.sql" />
+    <Build Include="StoredProcedures\BrokerPaymentMessageProcessed.sql" />
+    <Build Include="ServiceBroker\Messages\ProcessPaymentRequest.sql" />
+    <Build Include="ServiceBroker\Messages\ProcessPaymentResponse.sql" />
+    <Build Include="ServiceBroker\Messages\PrintRequest.sql" />
+    <Build Include="ServiceBroker\Messages\PrintResponse.sql" />
+    <Build Include="ServiceBroker\Contracts\ProcessPaymentContract.sql" />
+    <Build Include="ServiceBroker\Contracts\PrintContract.sql" />
+    <Build Include="ServiceBroker\Queues\ProcessPaymentInitiatorQueue.sql" />
+    <Build Include="ServiceBroker\Queues\PrintInitiatorQueue.sql" />
+    <Build Include="ServiceBroker\Queues\ProcessPaymentTargetQueue.sql" />
+    <Build Include="ServiceBroker\Queues\PrintTargetQueue.sql" />
+    <Build Include="ServiceBroker\Services\PrintInitiatorService.sql" />
+    <Build Include="ServiceBroker\Services\PrintTargetService.sql" />
+    <Build Include="ServiceBroker\Services\ProcessPaymentInitiatorService.sql" />
+    <Build Include="ServiceBroker\Services\ProcessPaymentTargetService.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="ServiceBroker\SeedData.sql" />
+  </ItemGroup>
+</Project>

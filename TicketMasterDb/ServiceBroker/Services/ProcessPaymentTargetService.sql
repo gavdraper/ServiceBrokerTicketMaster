@@ -1,0 +1,1 @@
+﻿CREATE SERVICE ProcessPaymentTargetService ON QUEUE ProcessPaymentTargetQueue(ProcessPaymentContract)

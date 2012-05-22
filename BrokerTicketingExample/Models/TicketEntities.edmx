@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="TicketMasterModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="TicketMasterModelStoreContainer">
+          <EntitySet Name="Bookings" EntityType="TicketMasterModel.Store.Bookings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Events" EntityType="TicketMasterModel.Store.Events" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PaymentStatus" EntityType="TicketMasterModel.Store.PaymentStatus" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PrintStatus" EntityType="TicketMasterModel.Store.PrintStatus" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_Bookings_PaymentStatus" Association="TicketMasterModel.Store.FK_Bookings_PaymentStatus">
+            <End Role="PaymentStatus" EntitySet="PaymentStatus" />
+            <End Role="Bookings" EntitySet="Bookings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bookings_PrintStatus" Association="TicketMasterModel.Store.FK_Bookings_PrintStatus">
+            <End Role="PrintStatus" EntitySet="PrintStatus" />
+            <End Role="Bookings" EntitySet="Bookings" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Bookings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="CreditCard" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="BillAmount" Type="decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="Cancelled" Type="bit" Nullable="false" />
+          <Property Name="PaymentStatus" Type="int" Nullable="false" />
+          <Property Name="PrintStatus" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Events">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="TotalTicketCount" Type="int" Nullable="false" />
+          <Property Name="Price" Type="decimal" Nullable="false" Precision="19" Scale="4" />
+        </EntityType>
+        <EntityType Name="PaymentStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Status" Type="nvarchar" Nullable="false" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="PrintStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Status" Type="nvarchar" Nullable="false" MaxLength="30" />
+        </EntityType>
+        <Association Name="FK_Bookings_PaymentStatus">
+          <End Role="PaymentStatus" Type="TicketMasterModel.Store.PaymentStatus" Multiplicity="1" />
+          <End Role="Bookings" Type="TicketMasterModel.Store.Bookings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentStatus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Bookings">
+              <PropertyRef Name="PaymentStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bookings_PrintStatus">
+          <End Role="PrintStatus" Type="TicketMasterModel.Store.PrintStatus" Multiplicity="1" />
+          <End Role="Bookings" Type="TicketMasterModel.Store.Bookings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrintStatus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Bookings">
+              <PropertyRef Name="PrintStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="BrokerPaymentMessageProcessed" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="BrokerPrintMessageProcessed" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="CreateBooking" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EventId" Type="int" Mode="In" />
+          <Parameter Name="Quantity" Type="int" Mode="In" />
+          <Parameter Name="CreditCard" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="GetEvents" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TicketMasterModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="TicketMasterEntities" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="Bookings" EntityType="TicketMasterModel.Booking" />
+          <EntitySet Name="Events" EntityType="TicketMasterModel.Event" />
+          <EntitySet Name="PaymentStatus" EntityType="TicketMasterModel.PaymentStatu" />
+          <EntitySet Name="PrintStatus" EntityType="TicketMasterModel.PrintStatu" />
+          <AssociationSet Name="FK_Bookings_PaymentStatus" Association="TicketMasterModel.FK_Bookings_PaymentStatus">
+            <End Role="PaymentStatus" EntitySet="PaymentStatus" />
+            <End Role="Bookings" EntitySet="Bookings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Bookings_PrintStatus" Association="TicketMasterModel.FK_Bookings_PrintStatus">
+            <End Role="PrintStatus" EntitySet="PrintStatus" />
+            <End Role="Bookings" EntitySet="Bookings" />
+          </AssociationSet>
+          <FunctionImport Name="BrokerPaymentMessageProcessed" ReturnType="Collection(String)" />
+          <FunctionImport Name="BrokerPrintMessageProcessed" ReturnType="Collection(String)" />
+          <FunctionImport Name="CreateBooking">
+            <Parameter Name="EventId" Mode="In" Type="Int32" />
+            <Parameter Name="Quantity" Mode="In" Type="Int32" />
+            <Parameter Name="CreditCard" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetEvents" ReturnType="Collection(TicketMasterModel.GetEvents_Result)" />
+        </EntityContainer>
+        <EntityType Name="Booking">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="CreditCard" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="BillAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="Cancelled" Type="Boolean" Nullable="false" />
+          <Property Name="PaymentStatus" Type="Int32" Nullable="false" />
+          <Property Name="PrintStatus" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PaymentStatu" Relationship="TicketMasterModel.FK_Bookings_PaymentStatus" FromRole="Bookings" ToRole="PaymentStatus" />
+          <NavigationProperty Name="PrintStatu" Relationship="TicketMasterModel.FK_Bookings_PrintStatus" FromRole="Bookings" ToRole="PrintStatus" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TotalTicketCount" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+        </EntityType>
+        <EntityType Name="PaymentStatu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="30" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Bookings" Relationship="TicketMasterModel.FK_Bookings_PaymentStatus" FromRole="PaymentStatus" ToRole="Bookings" />
+        </EntityType>
+        <EntityType Name="PrintStatu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="30" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Bookings" Relationship="TicketMasterModel.FK_Bookings_PrintStatus" FromRole="PrintStatus" ToRole="Bookings" />
+        </EntityType>
+        <Association Name="FK_Bookings_PaymentStatus">
+          <End Role="PaymentStatus" Type="TicketMasterModel.PaymentStatu" Multiplicity="1" />
+          <End Role="Bookings" Type="TicketMasterModel.Booking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentStatus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Bookings">
+              <PropertyRef Name="PaymentStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Bookings_PrintStatus">
+          <End Role="PrintStatus" Type="TicketMasterModel.PrintStatu" Multiplicity="1" />
+          <End Role="Bookings" Type="TicketMasterModel.Booking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrintStatus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Bookings">
+              <PropertyRef Name="PrintStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="GetEvents_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="Date" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="TotalTicketCount" Nullable="false" />
+          <Property Type="Int32" Name="Remaining" Nullable="true" />
+          <Property Type="Decimal" Name="Price" Nullable="false" Precision="19" Scale="4" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TicketMasterModelStoreContainer" CdmEntityContainer="TicketMasterEntities">
+          <EntitySetMapping Name="Bookings">
+            <EntityTypeMapping TypeName="TicketMasterModel.Booking">
+              <MappingFragment StoreEntitySet="Bookings">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="CreditCard" ColumnName="CreditCard" />
+                <ScalarProperty Name="BillAmount" ColumnName="BillAmount" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Cancelled" ColumnName="Cancelled" />
+                <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
+                <ScalarProperty Name="PrintStatus" ColumnName="PrintStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="TicketMasterModel.Event">
+              <MappingFragment StoreEntitySet="Events">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="TotalTicketCount" ColumnName="TotalTicketCount" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PaymentStatus">
+            <EntityTypeMapping TypeName="TicketMasterModel.PaymentStatu">
+              <MappingFragment StoreEntitySet="PaymentStatus">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PrintStatus">
+            <EntityTypeMapping TypeName="TicketMasterModel.PrintStatu">
+              <MappingFragment StoreEntitySet="PrintStatus">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="BrokerPaymentMessageProcessed" FunctionName="TicketMasterModel.Store.BrokerPaymentMessageProcessed" />
+          <FunctionImportMapping FunctionImportName="BrokerPrintMessageProcessed" FunctionName="TicketMasterModel.Store.BrokerPrintMessageProcessed" />
+          <FunctionImportMapping FunctionImportName="CreateBooking" FunctionName="TicketMasterModel.Store.CreateBooking" />
+          <FunctionImportMapping FunctionImportName="GetEvents" FunctionName="TicketMasterModel.Store.GetEvents">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="TicketMasterModel.GetEvents_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="TotalTicketCount" ColumnName="TotalTicketCount" />
+                <ScalarProperty Name="Remaining" ColumnName="Remaining" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

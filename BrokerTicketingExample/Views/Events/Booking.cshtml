@@ -1,0 +1,52 @@
+﻿@model BrokerTicketingExample.Models.Booking
+
+@{
+    ViewBag.Title = "Booking";
+}
+
+<h2>Booking</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
+
+<div style="color: red;">
+    @ViewBag.Error
+</div>
+
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Booking</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EventId)
+        </div>
+            @Html.HiddenFor(model => model.EventId)
+      
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Quantity)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Quantity)
+            @Html.ValidationMessageFor(model => model.Quantity)
+        </div>
+
+                <div class="editor-label">
+            @Html.LabelFor(model => model.CreditCard)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.CreditCard)
+            @Html.ValidationMessageFor(model => model.CreditCard)
+        </div>
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
