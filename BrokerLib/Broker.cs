@@ -1,91 +1,88 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrokerLib
 {
-    public class Broker
+    public class Broker : IDisposable
     {
-        public SqlConnection cnn;
-        public SqlTransaction tran;
-        public SqlCommand cmd;
+        SqlConnection con;
+        SqlTransaction tran;
+        SqlCommand cmd;
 
         public Broker(string connectionString)
         {
-            cnn = new SqlConnection(connectionString);
-            cnn.Open();
+            con = new SqlConnection(connectionString);
+            con.Open();
+        }
+
+        public void BeginTransaction()
+        {
+            if (tran != null)
+                throw (new InvalidOperationException("Broker already has open transaction"));
+            tran = con.BeginTransaction();
+        }
+
+        public void Rollback()
+        {
+            if(tran==null)
+                throw(new InvalidOperationException("Broker not operating in a transactional context"));
+            tran.Rollback();
+            tran = null;
+        }
+
+        public void Commit()
+        {
+            if (tran == null)
+                throw(new InvalidOperationException("Broker not operating in a transactional context"));
+            tran.Commit();
+            tran = null;
         }
 
         public void Send(Guid dialogHandle, string msg, string msgType)
         {
-            // Get the context command
-            SqlCommand cmd = cnn.CreateCommand();
+            SqlCommand cmd = con.CreateCommand();
             cmd.Transaction = tran;
 
-            // Add dialog handle
             SqlParameter paramDialogHandle = new SqlParameter("@dh", SqlDbType.UniqueIdentifier);
             paramDialogHandle.Value = dialogHandle;
             cmd.Parameters.Add(paramDialogHandle);
 
-            // Add message
             SqlParameter paramMsg = new SqlParameter("@msg", SqlDbType.NVarChar, msg.Length);
             paramMsg.Value = msg;
             cmd.Parameters.Add(paramMsg);
 
-            // Build the SEND command
-            cmd.CommandText = "SEND ON CONVERSATION @dh " +
-                "MESSAGE TYPE [" + msgType + "]" +
-                "(@msg)";
+            cmd.CommandText = "SEND ON CONVERSATION @dh MESSAGE TYPE [" + msgType + "] (@msg)";
 
-            try
-            {
-                cmd.ExecuteNonQuery();
-
-                //Console.WriteLine("Sent message: " + msg);
-            }
-            catch (Exception e)
-            {
-                //Console.WriteLine("SEND failed " + e.Message);
-            }
+            cmd.ExecuteNonQuery();
         }
 
         public void Receive(string queueName, out string msgType, out string msg, out Guid ConversationGroup, out Guid dialogHandle)
         {
-            //default return values
             msgType = null;
             msg = null;
             ConversationGroup = Guid.Empty;
             dialogHandle = Guid.Empty;
 
-            // Get the context command
-            cmd = cnn.CreateCommand();
+            cmd = con.CreateCommand();
             cmd.Transaction = tran;
 
-            // Get output msgtype
             SqlParameter paramMsgType = new SqlParameter("@msgtype", SqlDbType.NVarChar, 256);
             paramMsgType.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(paramMsgType);
 
-            // Get output msg
             SqlParameter paramMsg = new SqlParameter("@msg", SqlDbType.NVarChar, 4000);
             paramMsg.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(paramMsg);
 
-            // Get output si
             SqlParameter paramConversationGroup = new SqlParameter("@cg", SqlDbType.UniqueIdentifier);
             paramConversationGroup.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(paramConversationGroup);
 
-            // Get output dh
             SqlParameter paramDialogHandle = new SqlParameter("@dh", SqlDbType.UniqueIdentifier);
             paramDialogHandle.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(paramDialogHandle);
 
-            // Build the Receive command
             cmd.CommandText = "WAITFOR (RECEIVE TOP(1)  @msgtype = message_type_name, " +
                 "@msg = message_body, " +
                 "@cg = conversation_group_id, " +
@@ -93,50 +90,50 @@ namespace BrokerLib
                 "FROM [" + queueName + "]) " +
                 ", TIMEOUT 5000";
 
-            try
-            {
-                cmd.ExecuteNonQuery();
 
-                if (!(paramMsgType.Value is DBNull))
-                {
-                    msgType = (string)paramMsgType.Value;
-                    msg = (string)paramMsg.Value;
-                    ConversationGroup = (System.Guid)paramConversationGroup.Value;
-                    dialogHandle = (System.Guid)paramDialogHandle.Value;
-                }
+            cmd.ExecuteNonQuery();
 
-                //Console.WriteLine("Received message: " + msg);
-            }
-            catch (Exception e)
+            if (!(paramMsgType.Value is DBNull))
             {
-                //Console.WriteLine("RECEIVE failed " + e.Message);
+                msgType = (string)paramMsgType.Value;
+                msg = (string)paramMsg.Value;
+                ConversationGroup = (System.Guid)paramConversationGroup.Value;
+                dialogHandle = (System.Guid)paramDialogHandle.Value;
             }
         }
 
         public void EndDialog(Guid dialogHandle)
         {
-            // Get the context command
-            SqlCommand cmd = cnn.CreateCommand();
+            SqlCommand cmd = con.CreateCommand();
             cmd.Transaction = tran;
 
-            // Add dialog handle
             SqlParameter paramDialogHandle = new SqlParameter("@dh", SqlDbType.UniqueIdentifier);
             paramDialogHandle.Value = dialogHandle;
             cmd.Parameters.Add(paramDialogHandle);
 
-            // Build the SEND command
             cmd.CommandText = "END CONVERSATION @dh ";
 
-            try
-            {
-                cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
+        }
 
-                //	Console.WriteLine("END DIALOG called...");
-            }
-            catch (Exception e)
+        private bool disposed;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!this.disposed)
             {
-                //	Console.WriteLine("END CONVERSATION failed " + e.Message);
+                if (disposing)
+                {
+                    con.Dispose();
+                }
+                disposed = true;
             }
         }
+
     }
 }

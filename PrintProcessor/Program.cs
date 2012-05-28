@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 using BrokerLib;
 
@@ -35,34 +32,34 @@ namespace PrintProcessor
 
         static void monitorPaymentQueue()
         {
-            var broker = new Broker(ConfigurationManager.AppSettings["connectionString"]);
-            while (!stopping)
+            using (var broker = new Broker(ConfigurationManager.AppSettings["connectionString"]))
             {
-                string message;
-                string messageType;
-                Guid dialogHandle;
-                Guid serviceInstance;
-                broker.tran = broker.cnn.BeginTransaction();
-                broker.Receive("PrintTargetQueue", out messageType, out message, out serviceInstance, out dialogHandle);
-                if (message != null)
+                while (!stopping)
                 {
-                    switch (messageType)
+                    string message, messageType;
+                    Guid dialogHandle, serviceInstance;
+                    broker.BeginTransaction();
+                    broker.Receive("PrintTargetQueue", out messageType, out message, out serviceInstance, out dialogHandle);
+                    if (message != null)
                     {
-                        case "PrintRequest":
-                            {
-                                var xml = new XmlDocument();
-                                xml.LoadXml(message);
-                                int BookingId = int.Parse(xml.DocumentElement.InnerText);                               
-                                Console.Write(string.Format("Printing Tickets For Order : {0}... ", BookingId));
-                                Thread.Sleep(3000); /******CODE TO PRINT WOULD GO HERE*****/
-                                Console.Write("Printed\n");
-                                broker.Send(dialogHandle, "<Print><BookingId>" + BookingId + "</BookingId><PrintStatus>2</PrintStatus></Print>", "PrintResponse");
-                                broker.EndDialog(dialogHandle);
-                                break;
-                            }
+                        switch (messageType)
+                        {
+                            case "PrintRequest":
+                                {
+                                    var xml = new XmlDocument();
+                                    xml.LoadXml(message);
+                                    int BookingId = int.Parse(xml.DocumentElement.InnerText);
+                                    Console.Write(string.Format("Printing Tickets For Order : {0}... ", BookingId));
+                                    Thread.Sleep(3000); /******CODE TO PRINT WOULD GO HERE*****/
+                                    Console.Write("Printed\n");
+                                    broker.Send(dialogHandle, "<Print><BookingId>" + BookingId + "</BookingId><PrintStatus>2</PrintStatus></Print>", "PrintResponse");
+                                    broker.EndDialog(dialogHandle);
+                                    break;
+                                }
+                        }
                     }
+                    broker.Commit();
                 }
-                broker.tran.Commit();
             }
         }
     }
