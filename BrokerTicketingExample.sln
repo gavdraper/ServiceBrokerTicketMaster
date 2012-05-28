@@ -9,12 +9,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintProcessor", "PrintProc
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TicketMasterDb", "TicketMasterDb\TicketMasterDb.sqlproj", "{A2F95316-5A72-455B-8700-D4F9A1EF7135}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrokerLib", "BrokerLib\BrokerLib.csproj", "{21F921C0-935A-41D8-BB84-E4EC8AE7C287}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21F921C0-935A-41D8-BB84-E4EC8AE7C287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21F921C0-935A-41D8-BB84-E4EC8AE7C287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21F921C0-935A-41D8-BB84-E4EC8AE7C287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21F921C0-935A-41D8-BB84-E4EC8AE7C287}.Release|Any CPU.Build.0 = Release|Any CPU
 		{94C5BD01-9AA8-4829-AEA6-20B95703F93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{94C5BD01-9AA8-4829-AEA6-20B95703F93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94C5BD01-9AA8-4829-AEA6-20B95703F93A}.Release|Any CPU.ActiveCfg = Release|Any CPU

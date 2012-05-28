@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Xml;
+using System.Configuration;
+using BrokerLib;
 
 namespace PaymentProcessor
 {
@@ -30,7 +32,7 @@ namespace PaymentProcessor
 
         static void monitorPaymentQueue()
         {
-            var broker = new Broker();
+            var broker = new Broker(ConfigurationManager.AppSettings["connectionString"]);
             while (!stopping)
             {
                 string message;
@@ -52,8 +54,7 @@ namespace PaymentProcessor
                                 decimal BillAmount = decimal.Parse(xml.DocumentElement["BillAmount"].InnerText);
                                 Console.Write(string.Format("Processing Order : {0} For £{1} Card : {2}... ",BookingId,BillAmount,CreditCard));
                                 Thread.Sleep(3000); /******CODE TO PROCESS PAYMENT WOULD GO HERE*****/
-                                Console.Write("Processed\n");
-                                
+                                Console.Write("Processed\n");                                
                                 broker.Send(dialogHandle, "<Payment><BookingId>" + BookingId +"</BookingId><PaymentStatus>2</PaymentStatus></Payment>","ProcessPaymentResponse");
                                 broker.EndDialog(dialogHandle);
                                 break;
